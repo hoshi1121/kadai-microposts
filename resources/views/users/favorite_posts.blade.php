@@ -1,9 +1,9 @@
-@if (count($microposts) > 0)
+@if (count($favorites) > 0)
     <ul class="list-unstyled">
-        @foreach ($microposts as $micropost)
-            <li class="media mb-3">
-                {{-- 投稿の所有者のメールアドレスをもとにGravatarを取得して表示 --}}
-                <img class="mr-2 rounded" src="{{ Gravatar::get($micropost->user->email, ['size' => 50]) }}" alt="">
+        @foreach ($favorites as $favorite)
+            <li class="media">
+                {{-- ユーザのメールアドレスをもとにGravatarを取得して表示 --}}
+                <img class="mr-2 rounded" src="{{ Gravatar::get($user->email, ['size' => 50]) }}" alt="">
                 <div class="media-body">
                     <div>
                         {{-- 投稿の所有者のユーザ詳細ページへのリンク --}}
@@ -12,14 +12,16 @@
                     </div>
                     
                     <div>
-                        {{-- 投稿内容 --}}
-                        <p class="mb-0">{!! nl2br(e($micropost->content)) !!}</p>
+                        {{-- お気に入りした投稿内容 --}}
+                        <p class="mb-0">{!! nl2br(e($favorite->content)) !!}</p>
                     </div>
                     <div>
-                         {{-- お気に入り追加のフォーム --}}
-                            {!! Form::open(['route' => ['favorites.favorite', $user->id]]) !!}
-                                {!! Form::submit('Favorite', ['class' => "btn btn-success btn-sm"]) !!}
+                        @if (Auth::id() == $favorite->user_id)
+                         {{-- お気に入り削除のフォーム --}}
+                            {!! Form::open(['route' => ['favorites.destroy', $favorite->id], 'method' => 'delete']) !!}
+                                {!! Form::submit('Unfavorite', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
+                        @endif
                         @if (Auth::id() == $micropost->user_id)
                             {{-- 投稿削除ボタンのフォーム --}}
                             {!! Form::open(['route' => ['microposts.destroy', $micropost->id], 'method' => 'delete']) !!}
@@ -32,5 +34,5 @@
         @endforeach
     </ul>
     {{-- ページネーションのリンク --}}
-    {{ $microposts->links() }}
+    {{ $favorites->links() }}
 @endif
