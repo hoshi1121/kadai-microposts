@@ -158,6 +158,8 @@ class User extends Authenticatable
     {
         // すでにお気に入りにしているかの確認
         $registered = $this->is_favorite($micropostId);
+        // 対象が自分自身の投稿かどうかの確認
+        //$its_me = $this->id == $micropostId;
 
         if ($registered) {
             // すでにお気に入りにしていれば何もしない
